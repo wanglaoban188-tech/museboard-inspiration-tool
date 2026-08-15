@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Museboard Image Collector",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "Collect selected images from supported websites and keep original source links.",
   "permissions": ["activeTab", "scripting", "tabs", "storage"],
   "host_permissions": [
@@ -26,18 +26,30 @@
   "background": {
     "service_worker": "background.js"
   },
-  "content_scripts": [{
-    "matches": [
-      "https://pinterest.com/*",
-      "https://*.pinterest.com/*",
-      "https://*.amazon.com/*",
-      "https://*.amazon.cn/*",
-      "https://huaban.com/*",
-      "https://*.huaban.com/*",
-      "https://*.instagram.com/*"
-    ],
-    "js": ["collector.js"],
-    "css": ["collector.css"],
-    "run_at": "document_idle"
-  }]
+  "content_scripts": [
+    {
+      "matches": [
+        "https://pinterest.com/*",
+        "https://*.pinterest.com/*",
+        "https://*.amazon.com/*",
+        "https://*.amazon.cn/*",
+        "https://huaban.com/*",
+        "https://*.huaban.com/*",
+        "https://*.instagram.com/*"
+      ],
+      "js": ["collector.js"],
+      "css": ["collector.css"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://museboard-inspiration-tool-v3.vercel.app/*",
+        "https://*.vercel.app/*",
+        "http://127.0.0.1:3000/*",
+        "http://localhost:3000/*"
+      ],
+      "js": ["museboard-sync.js"],
+      "run_at": "document_idle"
+    }
+  ]
 }

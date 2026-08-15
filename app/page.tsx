@@ -184,13 +184,24 @@ export default function Home() {
   const [lastSync, setLastSync] = useState(0);
 
   useEffect(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem(LIBRARY_KEY) ?? "[]") as Result[];
-      if (Array.isArray(saved) && saved.length) {
-        setResults(current => mergeResults(current, saved.map(item => autoClassify({ ...item, saved: true }))));
-      }
-    } catch {}
+    const loadLibrary = () => {
+      try {
+        const saved = JSON.parse(localStorage.getItem(LIBRARY_KEY) ?? "[]") as Result[];
+        if (Array.isArray(saved) && saved.length) {
+          setResults(current => mergeResults(saved.map(item => autoClassify({ ...item, saved: true })), current));
+        }
+      } catch {}
+    };
+
+    loadLibrary();
+    window.addEventListener("museboard:library-updated", loadLibrary);
+    window.addEventListener("storage", loadLibrary);
     setLibraryLoaded(true);
+
+    return () => {
+      window.removeEventListener("museboard:library-updated", loadLibrary);
+      window.removeEventListener("storage", loadLibrary);
+    };
   }, []);
 
   useEffect(() => {
