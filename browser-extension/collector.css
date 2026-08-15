@@ -1,0 +1,78 @@
+.museboard-candidate {
+  outline: 4px solid #d98768 !important;
+  outline-offset: 2px !important;
+  cursor: crosshair !important;
+  filter: brightness(.94) !important;
+}
+
+.museboard-selected {
+  outline: 5px solid #2f9467 !important;
+  outline-offset: 2px !important;
+  cursor: pointer !important;
+  filter: brightness(.9) saturate(1.08) !important;
+}
+
+.museboard-toast {
+  position: fixed !important;
+  right: 24px !important;
+  bottom: 92px !important;
+  z-index: 2147483647 !important;
+  background: #292521 !important;
+  color: #fff !important;
+  padding: 13px 17px !important;
+  border-radius: 10px !important;
+  font: 13px/1.4 Arial, "Microsoft YaHei", sans-serif !important;
+  box-shadow: 0 10px 35px #0004 !important;
+}
+
+.museboard-toast.ok {
+  background: #34785a !important;
+}
+
+.museboard-toast.error {
+  background: #b13f3f !important;
+}
+
+.museboard-batchbar {
+  position: fixed !important;
+  right: 24px !important;
+  bottom: 24px !important;
+  z-index: 2147483647 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  background: #fff !important;
+  color: #2b2723 !important;
+  border: 1px solid #eadfd5 !important;
+  border-radius: 14px !important;
+  padding: 10px 12px !important;
+  font: 13px/1.4 Arial, "Microsoft YaHei", sans-serif !important;
+  box-shadow: 0 16px 45px #0003 !important;
+}
+
+.museboard-batchbar strong {
+  color: #b86446 !important;
+}
+
+.museboard-batchbar button {
+  border: 0 !important;
+  border-radius: 9px !important;
+  padding: 8px 10px !important;
+  font: 12px Arial, "Microsoft YaHei", sans-serif !important;
+  cursor: pointer !important;
+}
+
+.museboard-batchbar button:disabled {
+  opacity: .45 !important;
+  cursor: not-allowed !important;
+}
+
+.museboard-finish {
+  color: #fff !important;
+  background: #b86446 !important;
+}
+
+.museboard-cancel {
+  color: #6f665f !important;
+  background: #f3eee9 !important;
+}

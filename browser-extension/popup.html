@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="brand"><span>✓</span><strong>Museboard</strong></div>
+  <h1>批量采集图片</h1>
+  <p>部署到 Vercel / Netlify 后，把正式网址填在下面。Pinterest 推荐使用“采集当前页可见图片”。</p>
+
+  <label class="server-label">
+    Museboard 网址
+    <input id="serverUrl" placeholder="https://your-site.vercel.app">
+  </label>
+  <button id="saveServer" class="secondary">保存网址</button>
+
+  <button id="visible">采集当前页可见图片</button>
+  <button id="start" class="secondary">手动批量选择</button>
+  <div id="status">请先打开 Pinterest / Amazon / 花瓣 / Instagram 页面</div>
+  <script src="popup.js"></script>
+</body>
+</html>
