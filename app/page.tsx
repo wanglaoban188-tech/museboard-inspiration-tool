@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Bookmark, Check, ChevronDown, Download, ExternalLink, Globe2, Grid2X2, Heart,
-  ImagePlus, Languages, Library, Link2, Plus, Search, SlidersHorizontal, Sparkles, X
+  ImagePlus, Languages, Library, Link2, Plus, Search, SlidersHorizontal, Sparkles, Trash2, X
 } from "lucide-react";
 
 type Category = {
@@ -39,6 +39,14 @@ type Source = {
 };
 
 const LIBRARY_KEY = "museboard.library.v2";
+
+const categoryOptions = {
+  productType: ["待确认", "钱包", "包包", "证件扣", "手机挂绳", "地垫", "枕套", "厨房毛巾", "礼盒", "美妆", "家居"],
+  imageType: ["产品参考图", "白底产品图", "场景图", "细节图", "功能图", "包装图", "品牌故事图", "A+图", "广告图", "社媒图"],
+  style: ["通用电商风", "高级品牌感", "简约", "奶油风", "欧美风", "自然光", "商业摄影", "INS风", "奢华感"],
+  scene: ["待确认", "厨房", "浴室", "卧室", "街拍", "办公室", "礼盒", "节日送礼", "户外", "居家"],
+  usage: ["套图参考", "亚马逊主图", "亚马逊套图", "A+页面", "广告图", "社媒图", "详情页", "包装参考"]
+} satisfies Record<keyof Category, string[]>;
 
 const sources: Source[] = [
   { id: "unsplash", name: "Unsplash", short: "U", color: "#222", mode: "api", note: "官方 API · 页内结果", searchUrl: q => `https://unsplash.com/s/photos/${encodeURIComponent(q)}` },
@@ -316,6 +324,43 @@ export default function Home() {
     setSelected([]);
   }
 
+  function deleteResult(id: string) {
+    setResults(items => items.filter(result => result.id !== id));
+    setSelected(items => items.filter(item => item !== id));
+    setDetail(current => current?.id === id ? null : current);
+  }
+
+  function deleteSelected() {
+    setResults(items => items.filter(result => !selected.includes(result.id)));
+    setSelected([]);
+  }
+
+  function updateCategory(id: string, field: keyof Category, value: string) {
+    setResults(items => items.map(result => {
+      if (result.id !== id) return result;
+      const baseCategory = result.category ?? autoClassify(result).category ?? {
+        productType: "待确认",
+        imageType: "产品参考图",
+        style: "通用电商风",
+        scene: "待确认",
+        usage: "套图参考"
+      };
+      const category = { ...baseCategory, [field]: value };
+      const categoryTags = [
+        `产品:${category.productType}`,
+        `类型:${category.imageType}`,
+        `风格:${category.style}`,
+        `场景:${category.scene}`,
+        `用途:${category.usage}`
+      ];
+      return {
+        ...result,
+        category,
+        tags: Array.from(new Set([...result.tags.filter(tag => !/^(产品|类型|风格|场景|用途):/.test(tag)), ...categoryTags]))
+      };
+    }));
+  }
+
   function toggleSource(id: string) {
     setSelectedSources(items => items.includes(id) ? items.filter(item => item !== id) : [...items, id]);
   }
@@ -379,6 +424,7 @@ export default function Home() {
             <small>拖拽图片到这里，或点击选择</small>
             <i>JPG · PNG · WEBP，最大 15MB</i>
           </>}
+          {selected.length > 0 && <button className="danger" onClick={deleteSelected}><Trash2 size={15}/> 删除所选</button>}
         </div>
 
         <div className="prompt-area">
@@ -453,10 +499,25 @@ export default function Home() {
             <button className={`select ${selected.includes(item.id) ? "checked" : ""}`} onClick={event => { event.stopPropagation(); setSelected(items => items.includes(item.id) ? items.filter(id => id !== item.id) : [...items, item.id]); }}>{selected.includes(item.id) && <Check size={15}/>}</button>
             <span className="score">{item.score}% 相似</span>
             <button className={`heart ${item.saved ? "liked" : ""}`} onClick={event => { event.stopPropagation(); setResults(items => items.map(result => result.id === item.id ? autoClassify({ ...result, saved: !result.saved }) : result)); }}><Heart size={17} fill={item.saved ? "currentColor" : "none"}/></button>
+            <button className="delete-card" title="删除图片" onClick={event => { event.stopPropagation(); deleteResult(item.id); }}><Trash2 size={15}/></button>
           </div>
           <div className="card-info">
             <h3>{item.title}</h3>
             {item.category && <div className="category-line">{item.category.productType} · {item.category.imageType} · {item.category.usage}</div>}
+            <div className="category-editor" onClick={event => event.stopPropagation()}>
+              <label>
+                <span>产品分类</span>
+                <select value={item.category?.productType ?? "待确认"} onChange={event => updateCategory(item.id, "productType", event.target.value)}>
+                  {categoryOptions.productType.map(option => <option key={option} value={option}>{option}</option>)}
+                </select>
+              </label>
+              <label>
+                <span>图片类型</span>
+                <select value={item.category?.imageType ?? "产品参考图"} onChange={event => updateCategory(item.id, "imageType", event.target.value)}>
+                  {categoryOptions.imageType.map(option => <option key={option} value={option}>{option}</option>)}
+                </select>
+              </label>
+            </div>
             <div className="tags">{item.tags.slice(0, 7).map(tag => <span key={tag}>{tag}</span>)}</div>
             <footer><span>{item.source}</span><small>{item.size}</small></footer>
           </div>
